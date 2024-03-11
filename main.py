@@ -3,14 +3,14 @@ import numpy as np
 
 class Decision:
     def __init__(self, data, weights, method):
-        self.data = pd.read_csv(data).values
+        self.data = pd.read_csv(data, header=None).values
         self.weights = pd.read_csv(weights, header=None).values[0]
         self.method = method
 
         self.min_or_max = [0] * len(self.data)  # 1 = maximiser et 0 = minimiser, par défaut on minimise
 
-        print(self.data)
-        print(self.weights)
+        # print(self.data)
+        # print(self.weights)
 
     def change_to_max(self, index: list[int]):
         for i in index:
@@ -47,9 +47,38 @@ class Decision:
             self.electreIs()
         else:
             raise ValueError('Méthode non reconnue')
+        
+    
+    def dominates(self, candidat_1, candidat_2):
+        best_count_c1 = 0
+        best_count_c2 = 0
+        print(self.data[:3, :])
+        for index, row in enumerate(self.data[:3, :]):
+            if row[candidat_1] > row[candidat_2]:
+                if self.min_or_max[index] == 1 : 
+                    best_count_c1 += 1
+                else :
+                    best_count_c2 += 1   
+            elif row[candidat_1] < row[candidat_2]:
+                if self.min_or_max[index] == 0 : 
+                    best_count_c1 += 1
+                else :
+                    best_count_c2 += 1  
 
+        print(best_count_c1)
+        print(best_count_c2)
+            
+        if best_count_c1 > best_count_c2:
+            return candidat_1
+        elif best_count_c1 < best_count_c2:
+            return candidat_2
+        else:
+            return None
+        
 
 if __name__ == '__main__':
     decision = Decision('data/donnees.csv', 'data/poids.csv', 'Weighted Sum')
 
     decision.execute()
+
+    print(decision.dominates(2, 1))
