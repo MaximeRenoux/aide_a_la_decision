@@ -1,20 +1,31 @@
 import pandas as pd
 import numpy as np
 import argparse
+import networkx as nx
+import matplotlib.pyplot as plt
+
 
 class Decision:
-    def __init__(self, data, weights, method, dataset_name):
+    def __init__(self, method, dataset_name):
         self.divide_weights = 18
-        self.data = pd.read_csv(data, header=None).values
-        self.weights = pd.read_csv(weights, header=None).values[0]
-        self.veto_matrix = [0]*len(self.data)
-        if dataset_name == 'waste':
-            self.veto_matrix = [3]*len(self.data)
-            self.weights = self.weights/self.divide_weights
+
+        match dataset_name:
+            case 'waste':
+                self.data = pd.read_csv('data/waste_management/donnees.csv', header=None).values
+                self.weights = pd.read_csv('data/waste_management/poids.csv', header=None).values[0]
+                self.min_or_max = [0] * len(self.data) 
+                self.veto_matrix = [3]*len(self.data)
+                self.weights = self.weights/self.divide_weights
+            case 'td3':
+                self.data = pd.read_csv('data/td3/donnees.csv', header=None).values
+                self.weights = pd.read_csv('data/td3/poids.csv', header=None).values[0]
+                self.veto_matrix = [45, 29, 550, 6, 4.5, 4.5]
+                self.min_or_max = [0] * len(self.data)
+                self.change_to_max([1, 5])
+
+        print(self.min_or_max)
 
         self.method = method
-        
-        self.min_or_max = [0] * len(self.data)  # 1 = maximiser et 0 = minimiser, par défaut on minimise
 
         # print(self.data)
         # print(self.weights)
@@ -61,6 +72,35 @@ class Decision:
                     non_discordance_matrix[i][j] = decision.non_discordance(i, j)
         print(non_discordance_matrix)
 
+        indice = 0.6
+        print(len(concordance_matrix))
+        surclasse = np.zeros((len(concordance_matrix), len(concordance_matrix)))
+
+        for i in range(len(concordance_matrix)):
+            for j in range(len(concordance_matrix)):
+                if i == j:
+                    surclasse[i][j] = None
+                elif concordance_matrix[i][j] > indice and non_discordance_matrix[i][j] == 1:
+                    surclasse[i][j] = 1
+                else:
+                    surclasse[i][j] = 0
+        print('\n')
+        print(surclasse)
+
+        G = nx.DiGraph()
+
+        for i in range(len(surclasse)):
+            G.add_node(i, weight=surclasse[i])
+
+        for i in range(len(surclasse)):
+            for j in range(len(surclasse)):
+                if surclasse[i][j] == 1:
+                    G.add_edge(i, j)
+
+        nx.draw(G, with_labels=True)
+        plt.title('salut')
+        plt.show()
+
     def electreIs(self):
         pass
 
@@ -106,7 +146,9 @@ class Decision:
 
 if __name__ == '__main__':
 
+    #Possible values for DATASET : waste, td3
+    DATASET = 'td3'
 
-    decision = Decision('data/donnees.csv', 'data/poids.csv', 'Weighted Sum', 'waste')
+    decision = Decision('Weighted Sum', DATASET)
 
     decision.electreIV()
