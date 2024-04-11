@@ -80,7 +80,7 @@ class Decision:
         # Utilisez matplotlib pour afficher le graphe
         nx.draw(G, with_labels=True)
         plt.title('Graphe de dominance, somme pondérée')
-        plt.savefig('weighted_sum/graph.png')
+        plt.savefig(f'weighted_sum/{self.name}_graph.png')
         plt.clf()
         plt.cla()
         plt.close()
@@ -294,5 +294,7 @@ if __name__ == '__main__':
 
     decision = Decision('Weighted Sum', DATASET)
 
-    decision.electreIV()
-    decision.electreIs()
+    decision.weighted_sum()
+    #
+    # decision.electreIV()
+    # decision.electreIs()
