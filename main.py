@@ -56,6 +56,7 @@ class Decision:
         print(normalized_data)
         # implementing of a weighted sum method with the normalized data, each line of the data is a candidate and
         # each column is a criterion
+        self.weights = self.weights / self.divide_weights
         result = np.dot(self.weights, normalized_data)
         print(f'result : {result}')
         G = nx.DiGraph()
@@ -73,8 +74,10 @@ class Decision:
         # Utilisez matplotlib pour afficher le graphe
         nx.draw(G, with_labels=True)
         plt.title('Graphe de dominance, somme pondérée')
-        plt.show()
-        plt.savefig('figs/graph.png')
+        plt.savefig('weighted_sum/graph.png')
+        plt.clf()
+        plt.cla()
+        plt.close()
 
     def prometheeI(self):
         pass
