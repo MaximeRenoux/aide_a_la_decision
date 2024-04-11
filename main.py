@@ -24,6 +24,12 @@ class Decision:
                 self.seuils_pref = [20,10,200,4,2,2]
                 self.min_or_max = [0] * len(self.data)
                 self.change_to_max([1, 5])
+            case 'countries':
+                self.data = pd.read_csv('data/countries/donnees.csv', header=None).values
+                self.weights = pd.read_csv('data/countries/poids.csv', header=None).values[0]
+                self.veto_matrix = [1000]*len(self.data)
+                self.seuils_pref = [2]*len(self.data)
+                self.min_or_max = [1] * len(self.data)
 
         print(self.min_or_max)
 
@@ -254,7 +260,7 @@ class Decision:
 if __name__ == '__main__':
 
     #Possible values for DATASET : waste, td3
-    DATASET = 'waste'
+    DATASET = 'countries'
 
     decision = Decision('Weighted Sum', DATASET)
 
