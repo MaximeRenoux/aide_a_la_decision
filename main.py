@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
 import argparse
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -58,12 +57,10 @@ class Decision:
             self.weights_for_criteria[i] = value
 
     def weighted_sum(self):
-        normalized_data = StandardScaler().fit_transform(self.data)
-        print(normalized_data)
         # implementing of a weighted sum method with the normalized data, each line of the data is a candidate and
         # each column is a criterion
         self.weights = self.weights / self.divide_weights
-        result = np.dot(self.weights, normalized_data)
+        result = np.dot(self.weights, self.data)
         print(f'result : {result}')
         G = nx.DiGraph()
         # Ajout des nœuds au graphe - on suppose que chaque candidat est représenté par son indice dans la liste des result
@@ -290,7 +287,7 @@ class Decision:
 if __name__ == '__main__':
 
     #Possible values for DATASET : waste, td3
-    DATASET = 'countries'
+    DATASET = 'td3'
 
     decision = Decision('Weighted Sum', DATASET)
 
